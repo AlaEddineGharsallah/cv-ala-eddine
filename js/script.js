@@ -45,24 +45,32 @@ function contact() {
     }
 }
 
+$("#myTab li:first-child a").tab("show");
 
+//******************************* Contact form email *******************************/
 
-
-
-
-const form = document.getElementById("contact-form");
-
-const formEvent = form.addEventListener("Envoyer Message", (event) => {
-    event.preventDefault();
-    let mail = new FormData(form);
-    sendMail(mail);
+$("#staticform").submit(function (event) {
+  event.preventDefault();
+  $.ajax({
+    url: "https://api.staticforms.xyz/submit", // url where to submit the request
+    type: "POST", // type of action POST || GET
+    dataType: "json", // data type
+    data: $("#staticform").serialize(), // post data || get data
+    success: function (result) {
+      // you can see the result from the console
+      // tab of the developer tools
+      $("#submit").text(
+        "Message envoyé avec succès " + String.fromCodePoint(0x1f600)
+      );
+      $("#staticform")[0].reset();
+    },
+    error: function (xhr, resp, text) {
+      $("#submit").text(
+        "Message non envoyé, svp essayez de nouveau! " + String.fromCodePoint(0x1f601)
+      );
+    },
+  });
+  setTimeout(function () {
+    $("#submit").text("Envoyez Message");
+  }, 5000);
 });
-
-const sendMail = (mail) => {
-    fetch("http://localhost:3000/send", {
-        method: "post",
-        body: mail,
-    }).then((response) => {
-        return response.json();
-    });
-};
